@@ -4,8 +4,9 @@ library(patchwork)
 library(openxlsx)
 library(lme4)
 library(growthcurver)
+## Pesticide Selection
 ## Bifidobacterium Responses to Candidate Pesticide Exposure
-# Growth curve
+# Use 'growthcurver' to calculate the Carrying capacity and Growth Rate
 pesdata <- read.xlsx("rawdata.xlsx", sheet = "plate3")
 # pesdata <- read.xlsx("rawdata.xlsx", sheet = "plate1")
 # pesdata <- read.xlsx("rawdata.xlsx", sheet = "plate2")
@@ -16,7 +17,7 @@ gc_out3 <- SummarizeGrowthByPlate(pesdata)
 data_file <- "dataana.xlsx"
 write.xlsx(gc_out, data_file, rowNames = FALSE)
 gc_out3 <- SummarizeGrowthByPlate(pesdata, plot_fit = TRUE, plot_file = "gc_plots3.pdf")
-# Figure
+# Generate figures
 data1 <- read.xlsx("rawdata.xlsx", sheet = "Spirotetramat")
 g1=ggplot(data = data.frame(Group = data1$c, Values = data1$k), aes(x = Group, y = Values)) +
   geom_point(size = 2, color = "red") +
@@ -75,7 +76,11 @@ summary(m4_1)
 m4_2= lmer(c~(1 | group), data=data4)
 lr_test4 <- anova(m4_1, m4_2)
 p_value_4 <- 1 - pchisq(lr_test4$Chisq, df = lr_test4$Df)
+
+
+## Hypothesis 2:Adaptive laboratory evolution experiments enhance the resistance of bee gut bacteria to pesticides.
 ## Fipronil Resistance of Bifidobacterium Evolved on MEGA-Plate
+# Use 'growthcurver' to calculate the Carrying capacity and Growth Rate
 wildtype1=read.xlsx("rawdata.xlsx", sheet = "wild1")
 evolved1=read.xlsx("rawdata.xlsx", sheet = "evo1")
 gc_out1 <- SummarizeGrowthByPlate(wildtype1)
@@ -85,14 +90,14 @@ gc_out1 <- SummarizeGrowthByPlate(wildtype1, plot_fit = TRUE, plot_file = "gc_pl
 gc_out2 <- SummarizeGrowthByPlate(evolved1)
 write.xlsx(gc_out2, data_file, rowNames = FALSE)
 gc_out2 <- SummarizeGrowthByPlate(evolved1, plot_fit = TRUE, plot_file = "gc_plots2.pdf")
-data5= read.xlsx("rawdata.xlsx", sheet = "Mc1")
+data6= read.xlsx("rawdata.xlsx", sheet = "Mc1")
 # Create the scatter plot with different colors for treatments
-g5=ggplot(data5, aes(x = as.factor(concen), y = value, color = strain)) +
+g6=ggplot(data6, aes(x = as.factor(concen), y = value, color = strain)) +
   geom_point(size = 2) +
   geom_smooth(aes(group = strain), method = "loess", se = T, size = 1, span = 1.8) +
-  labs(x = "Fipronil Concentration (mg/L)", y = "Carrying capacity (OD630)") +
+  labs(x = "Fipronil Concentration (mg/L)", y = "Carrying capacity (OD630)", size=14) +
   scale_color_manual(values = c("ok" = "blue", "ek" = "red")) +
-  theme_classic()
+  theme_classic()+ theme(axis.text.x = element_text(size = 14),axis.text.y = element_text(size = 14))
 data6= read.xlsx("rawdata.xlsx", sheet = "Gr1")
 # Create the scatter plot with different colors for treatments
 g6=ggplot(data6, aes(x = as.factor(concen), y = value, color = strain)) +
@@ -114,6 +119,7 @@ summary(anova_8)
 anova_6<-aov(value~strain, data = data6)
 summary(anova_6)
 ## Fipronil Resistance of Bifidobacterium Evolved in Liquid Media
+# Panel 1: Bifidobacterium Responses to 0mg/L Fipronil
 ana_data1 <- read.xlsx("rawdata.xlsx", sheet = "1")
 strain_order1 <- c('ko','k1','k2','k3','k4','k5')
 ana_data1$strain <- factor(ana_data1$strain, levels = strain_order1)
@@ -130,7 +136,7 @@ g7 <- ggplot(data = ana_data1, aes(x = factor(strain), y = k, fill = strain)) +
        title = "Bifidobacterium Responses to 0mg/L Fipronil") +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
-#
+# Panel 2: Bifidobacterium Responses to 0.2mg/L Fipronil
 ana_data2 <- read.xlsx("rawdata.xlsx", sheet = "2")
 strain_order2 <- c('ko','k1','k2','k3','k4','k5')
 ana_data2$strain <- factor(ana_data2$strain, levels = strain_order2)
@@ -148,7 +154,7 @@ g8 <- ggplot(data = ana_data2, aes(x = factor(strain), y = k, fill = strain)) +
        title = "Bifidobacterium Responses to 0.2mg/L Fipronil") +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
-#
+# Panel 3: Bifidobacterium Responses to 1mg/L Fipronil
 ana_data3 <- read.xlsx("rawdata.xlsx", sheet = "3")
 strain_order3 <- c('ko','k1','k2','k3','k4','k5')
 ana_data3$strain <- factor(ana_data3$strain, levels = strain_order3)
@@ -166,7 +172,7 @@ g9 <- ggplot(data = ana_data3, aes(x = factor(strain), y = k, fill = strain)) +
        title = "Bifidobacterium Responses to 1mg/L Fipronil") +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
-#
+# Panel 4: Bifidobacterium Responses to 5mg/L Fipronil
 ana_data4 <- read.xlsx("rawdata.xlsx", sheet = "4")
 strain_order4 <- c('ko','k1','k2','k3','k4','k5')
 ana_data4$strain <- factor(ana_data4$strain, levels = strain_order4)
@@ -184,7 +190,7 @@ g10 <- ggplot(data = ana_data4, aes(x = factor(strain), y = k, fill = strain)) +
        title = "Bifidobacterium Responses to 5mg/L Fipronil") +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
-#
+# Panel 5: Bifidobacterium Responses to 25mg/L Fipronil
 ana_data5 <- read.xlsx("rawdata.xlsx", sheet = "5")
 strain_order5 <- c('ko','k1','k2','k3','k4','k5')
 ana_data5$strain <- factor(ana_data5$strain, levels = strain_order5)
@@ -202,7 +208,7 @@ g11 <- ggplot(data = ana_data5, aes(x = factor(strain), y = k, fill = strain)) +
        title = "Bifidobacterium Responses to 25mg/L Fipronil") +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
-#
+# Panel 6: Bifidobacterium Responses to 125mg/L Fipronil
 ana_data6 <- read.xlsx("rawdata.xlsx", sheet = "6")
 strain_order6 <- c('ko','k1','k2','k3','k4','k5')
 ana_data6$strain <- factor(ana_data6$strain, levels = strain_order6)
@@ -221,7 +227,10 @@ g12 <- ggplot(data = ana_data6, aes(x = factor(strain), y = k, fill = strain)) +
   theme(panel.background = element_rect(fill = "white", colour = "black")) +
   scale_fill_manual(values = custom_colors)
 combined_plots_3 <- (g7 + g8) / (g9 + g10) / (g11 + g12)
-##Impact of Microbial Supplementation on Bumblebee Fipronil Resistance
+
+## Hypothesis 3: Adding evolved gut bacteria to the bees' diet can strengthen the bees' resistance to pesticides as probiotics.
+## Impact of Microbial Supplementation on Bumblebee Fipronil Resistance
+data9 <- read.xlsx("rawdata.xlsx", sheet = "sp")
 data9_c=subset(data9,data9$trt=='c')
 i=8
 tem=subset(data9_c,data9_c$time==i)
@@ -250,7 +259,6 @@ mean=mean(tem$sr)
 CI=t.test(tem$sr, conf.level = 0.95)$conf.int
 mean
 CI
-data9 <- read.xlsx("rawdata.xlsx", sheet = "sp")
 datax=read.xlsx("rawdata.xlsx", sheet = "sr")
 datay=read.xlsx("rawdata.xlsx", sheet = "fi")
 # Create the scatter plot with different colors for treatments
@@ -259,8 +267,8 @@ g14=ggplot(datax, aes(x = time, y = mean, color = trt)) +
   geom_rect(aes(xmin = time , xmax = time + 1, ymin = small, ymax = big, fill =trt), alpha = 0.3) +
   geom_step(aes(group = trt), size = 1) +
   labs(x = "Time(day)", y = "Survival proportion (%)") +
-  scale_color_manual(values = c("p" = "gold","p-o" = "blue", "p-e1" = "purple", "p-e2" = "black")) +
-  scale_fill_manual(values = c("p" = "gold","p-o" = "blue", "p-e1" = "purple", "p-e2" = "black")) +
+  scale_color_manual(values = c("p" = "red","p-o" = "orange", "p-e1" = "yellow", "p-e2" = "green")) +
+  scale_fill_manual(values = c("p" = "red","p-o" = "orange", "p-e1" = "yellow", "p-e2" = "green")) +
   theme(panel.background = element_rect(fill = "white", colour = "black"))
 g15=ggplot(datay, aes(x = time, y = mean, color = trt)) +
   #geom_point(size = 2) +
@@ -272,5 +280,4 @@ g15=ggplot(datay, aes(x = time, y = mean, color = trt)) +
   theme(panel.background = element_rect(fill = "white", colour = "black"))
 combined_plots_4 <- g14+g15
 combined_plots_4
-
 
